@@ -1,10 +1,12 @@
 package com.amirsaleh.library.presentation;
 
 import com.amirsaleh.library.application.BookService;
+import com.amirsaleh.library.core.dto.request.bookRequest;
 import com.amirsaleh.library.core.dto.response.ApiResponse;
+import com.amirsaleh.library.core.dto.response.BookResponse;
+import com.amirsaleh.library.core.mapper.BookMapper;
 import com.amirsaleh.library.domain.Book;
 import io.swagger.v3.oas.annotations.Operation;
-import com.amirsaleh.library.core.dto.request.bookRequest;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -17,54 +19,54 @@ import java.util.UUID;
 @RestController
 @RequestMapping("/api/v1/book")
 @RequiredArgsConstructor
-@Tag(name="book")
+@Tag(name = "book")
 public class BookController {
+
     private final BookService bookService;
+    private final BookMapper bookMapper;
 
     @GetMapping
     @Operation(summary = "get all books")
-    public ResponseEntity<ApiResponse<List<Book>>> getAll() {
+    public ResponseEntity<ApiResponse<List<BookResponse>>> getAll() {
         List<Book> books = bookService.getAllBooks();
-
         return ResponseEntity
                 .status(HttpStatus.OK)
-                .body(ApiResponse.success(books));
+                .body(ApiResponse.success(bookMapper.toResponseList(books), ""));
     }
 
     @GetMapping("/{id}")
     @Operation(summary = "get book by id")
-    public ResponseEntity<ApiResponse<Book>> getBookById(@PathVariable UUID id) {
+    public ResponseEntity<ApiResponse<BookResponse>> getBookById(@PathVariable UUID id) {
         Book book = bookService.getById(id);
-
         return ResponseEntity
                 .status(HttpStatus.OK)
-                .body(ApiResponse.success(book));
+                .body(ApiResponse.success(bookMapper.toResponse(book), ""));
     }
 
     @PostMapping
     @Operation(summary = "add new book")
-    public ResponseEntity<ApiResponse<Book>> addBook(@RequestBody bookRequest request) {
+    public ResponseEntity<ApiResponse<BookResponse>> addBook(@RequestBody bookRequest request) {
         Book newBook = bookService.addBook(request);
         return ResponseEntity
                 .status(HttpStatus.CREATED)
-                .body(ApiResponse.success(newBook));
+                .body(ApiResponse.success(bookMapper.toResponse(newBook), "کتاب با موفقیت اضافه شد"));
     }
 
     @PutMapping("/{id}")
     @Operation(summary = "update book by id")
-    public  ResponseEntity<ApiResponse<Book>> updateBook(@PathVariable UUID id, @RequestBody bookRequest request) {
+    public ResponseEntity<ApiResponse<BookResponse>> updateBook(@PathVariable UUID id, @RequestBody bookRequest request) {
         Book updatedBook = bookService.updateBook(id, request);
-        return  ResponseEntity
+        return ResponseEntity
                 .status(HttpStatus.OK)
-                .body(ApiResponse.success(updatedBook));
+                .body(ApiResponse.success(bookMapper.toResponse(updatedBook), "کتاب با موفقیت ویرایش شد"));
     }
 
     @DeleteMapping("/{id}")
     @Operation(summary = "delete book by id")
-    public ResponseEntity<ApiResponse<Book>> deleteBook(@PathVariable UUID id) {
+    public ResponseEntity<ApiResponse<Void>> deleteBook(@PathVariable UUID id) {
         bookService.deleteBook(id);
         return ResponseEntity
                 .status(HttpStatus.OK)
-                .body(ApiResponse.success("Book deleted"));
+                .body(ApiResponse.success("کتاب با موفقیت حذف شد"));
     }
 }

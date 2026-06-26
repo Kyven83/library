@@ -20,11 +20,9 @@ import java.util.UUID;
 @RequiredArgsConstructor
 public class BorrowedService {
     private final BorrowedRepository borrowedRepository;
-    private final UserRepository userRepository;
     private final BookRepository bookRepository;
 
     private final UserService userService;
-    private final BookService bookService;
 
     private static final int MAX_BORROW_LIMIT = 3;
 
@@ -44,6 +42,10 @@ public class BorrowedService {
 
         if (books.size() != bookIds.size()) {
             throw new IllegalStateException("یک یا چند کتاب پیدا نشد.");
+        }
+
+        if (bookIds.size() != bookIds.stream().distinct().count()) {
+            throw new IllegalStateException("لیست کتاب‌ها شامل موارد تکراری است");
         }
 
         List<UUID> borrowedBookIds =

@@ -1,6 +1,6 @@
 package com.amirsaleh.library.application;
 
-import com.amirsaleh.library.application.mapper.UserMapper;
+import com.amirsaleh.library.core.mapper.UserMapper;
 import com.amirsaleh.library.core.dto.request.UserRegisterRequest;
 import com.amirsaleh.library.core.dto.response.UserResponse;
 import com.amirsaleh.library.domain.User;
