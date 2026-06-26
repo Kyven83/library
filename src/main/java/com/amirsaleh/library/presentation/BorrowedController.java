@@ -6,12 +6,10 @@ import com.amirsaleh.library.domain.Borrowed;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import com.amirsaleh.library.core.dto.request.borrowedRequest;
-
 
 import java.util.List;
 import java.util.UUID;
@@ -43,8 +41,8 @@ public class BorrowedController {
     }
 
     @PostMapping
-    public ResponseEntity<ApiResponse<Borrowed>> borrowedBook(@RequestBody borrowedRequest request) {
-        Borrowed borrowed = borrowedService.borrowBook(request.getUserId(), request.getBookId());
+    public ResponseEntity<ApiResponse<List<Borrowed>>> borrowedBook(@RequestBody borrowedRequest request) {
+        List<Borrowed> borrowed = borrowedService.borrowBooks(request.getUserId(), request.getBookId());
         return ResponseEntity
                 .status(HttpStatus.CREATED)
                 .body(ApiResponse.success(borrowed));

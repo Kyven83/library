@@ -22,4 +22,12 @@ public interface BorrowedRepository extends JpaRepository<Borrowed, UUID> {
 
     @Query("select b from Borrowed b where b.isReturned = false and b.dueDate < current_timestamp")
     List<Borrowed> findAllOverdue();
+
+    @Query("""
+       select b.book.id
+       from Borrowed b
+       where b.user.id = :userId
+       and b.isReturned = false
+       """)
+    List<UUID> findBorrowedBookIds(UUID userId);
 }

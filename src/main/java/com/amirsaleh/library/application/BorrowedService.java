@@ -12,6 +12,7 @@ import org.springframework.stereotype.Service;
 
 import java.time.Duration;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
@@ -28,29 +29,52 @@ public class BorrowedService {
     private static final int MAX_BORROW_LIMIT = 3;
 
     @Transactional
-    public Borrowed borrowBook(UUID userId, UUID bookId) {
+    public List<Borrowed> borrowBooks(UUID userId, List<UUID> bookIds) {
+
         User user = userService.getById(userId);
-        Book book = bookService.getById(bookId);
 
-        int borrowedNumber = borrowedRepository.countByUserAndIsReturnedFalse(user);
+        int borrowedCount = borrowedRepository.countByUserAndIsReturnedFalse(user);
 
-        if(borrowedNumber >= MAX_BORROW_LIMIT) {
-            throw new IllegalStateException(String.format("کاربر میتواند حداکثر %s کتاب به امانت ببرد", MAX_BORROW_LIMIT));
-        }
-        if(book.getQuantity() <= 0){
-            throw new IllegalStateException("کتاب موجود نمیباشد");
-        }
-        if (borrowedRepository.existsByUserIdAndBookIdAndIsReturnedFalse(userId, bookId)) {
-            throw new IllegalStateException("کاربر هم اکنون این کتاب را به امانت برده");
+        if (borrowedCount + bookIds.size() > MAX_BORROW_LIMIT) {
+            throw new IllegalStateException(
+                    String.format("کاربر حداکثر %d کتاب می‌تواند امانت بگیرد", MAX_BORROW_LIMIT));
         }
 
-        book.setQuantity(book.getQuantity() - 1);
-        bookRepository.save(book);
-        Borrowed borrowed = new Borrowed();
-        borrowed.setUser(user);
-        borrowed.setBook(book);
+        List<Book> books = bookRepository.findAllById(bookIds);
 
-        return borrowedRepository.save(borrowed);
+        if (books.size() != bookIds.size()) {
+            throw new IllegalStateException("یک یا چند کتاب پیدا نشد.");
+        }
+
+        List<UUID> borrowedBookIds =
+                borrowedRepository.findBorrowedBookIds(userId);
+
+        List<Borrowed> borrowedList = new ArrayList<>();
+
+        for (Book book : books) {
+
+            if (book.getQuantity() <= 0) {
+                throw new IllegalStateException(
+                        "کتاب " + book.getTitle() + " موجود نیست.");
+            }
+
+            if (borrowedBookIds.contains(book.getId())) {
+                throw new IllegalStateException(
+                        "کاربر قبلاً کتاب " + book.getTitle() + " را امانت گرفته است.");
+            }
+
+            book.setQuantity(book.getQuantity() - 1);
+
+            Borrowed borrowed = new Borrowed();
+            borrowed.setUser(user);
+            borrowed.setBook(book);
+
+            borrowedList.add(borrowed);
+        }
+
+        bookRepository.saveAll(books);
+
+        return borrowedRepository.saveAll(borrowedList);
     }
 
     @Transactional
