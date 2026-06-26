@@ -31,7 +31,7 @@ public class BorrowedService {
     @Transactional
     public List<Borrowed> borrowBooks(UUID userId, List<UUID> bookIds) {
 
-        User user = userService.getById(userId);
+        User user = userService.getEntityById(userId);
 
         int borrowedCount = borrowedRepository.countByUserAndIsReturnedFalse(user);
 

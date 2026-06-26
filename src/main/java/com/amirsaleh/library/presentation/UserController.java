@@ -3,6 +3,7 @@ package com.amirsaleh.library.presentation;
 import com.amirsaleh.library.application.UserService;
 import com.amirsaleh.library.core.dto.request.UserRegisterRequest;
 import com.amirsaleh.library.core.dto.response.ApiResponse;
+import com.amirsaleh.library.core.dto.response.UserResponse;
 import com.amirsaleh.library.domain.User;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -22,22 +23,22 @@ public class UserController {
 
     @GetMapping
     @Operation(summary = "get all users")
-    public ResponseEntity<ApiResponse<List<User>>> getUsers() {
-        List<User> users = userService.getAll();
+    public ResponseEntity<ApiResponse<List<UserResponse>>> getUsers() {
+        List<UserResponse> users = userService.getAll();
         return ResponseEntity.ok(ApiResponse.success(users));
     }
 
     @GetMapping("/{id}")
     @Operation(summary = "get user by id")
-    public ResponseEntity<ApiResponse<User>> getUserById(@PathVariable UUID id) {
-        User user = userService.getById(id);
+    public ResponseEntity<ApiResponse<UserResponse>> getUserById(@PathVariable UUID id) {
+        UserResponse user = userService.getById(id);
         return ResponseEntity.ok(ApiResponse.success(user));
     }
 
     @PutMapping("/{id}")
     @Operation(summary = "update profile")
-    public ResponseEntity<ApiResponse<User>> updateUser(@PathVariable UUID id, @RequestBody UserRegisterRequest request) {
-        User updatedUser = userService.updateUser(id, request);
+    public ResponseEntity<ApiResponse<UserResponse>> updateUser(@PathVariable UUID id, @RequestBody UserRegisterRequest request) {
+        UserResponse updatedUser = userService.updateUser(id, request);
         return ResponseEntity.ok(ApiResponse.success(updatedUser, "اطلاعات کاربر با موفقیت آپدیت شد"));
     }
 }
