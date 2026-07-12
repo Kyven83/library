@@ -17,4 +17,5 @@ public interface UserRepository extends JpaRepository<User, UUID> {
     Boolean existsByNationalCode(String nationalCode);
 
     User getUserById(UUID id);
+
 }
