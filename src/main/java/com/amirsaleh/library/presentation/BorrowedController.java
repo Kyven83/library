@@ -8,6 +8,7 @@ import com.amirsaleh.library.core.dto.response.BorrowedResponse;
 import com.amirsaleh.library.core.mapper.BorrowedMapper;
 import com.amirsaleh.library.domain.Borrowed;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -21,6 +22,7 @@ import java.util.UUID;
 @RequestMapping("api/v1/borrowed")
 @RequiredArgsConstructor
 @Tag(name = "borrowed")
+@SecurityRequirement(name = "bearerAuth")
 public class BorrowedController {
 
     private final BorrowedService borrowedService;

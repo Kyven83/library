@@ -6,6 +6,7 @@ import com.amirsaleh.library.core.dto.response.ApiResponse;
 import com.amirsaleh.library.core.dto.response.UserResponse;
 import com.amirsaleh.library.domain.User;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -18,6 +19,7 @@ import java.util.UUID;
 @RequestMapping("/api/v1/user")
 @RequiredArgsConstructor
 @Tag(name = "user")
+@SecurityRequirement(name = "bearerAuth")
 public class UserController {
     private final UserService userService;
 
